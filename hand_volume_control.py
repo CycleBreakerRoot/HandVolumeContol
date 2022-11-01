@@ -23,7 +23,7 @@ mag = 0
 fixed_mag = 1
 
 OldMin = 80
-OldMax = 95
+OldMax = 93
 NewMin = 0
 NewMax = 100
 
@@ -39,9 +39,6 @@ while True:
     detector.FindHands(img)
     mylist = detector.FindPosition(img , draw= False)
     if len(mylist) != 0:
-       
-       
-        
         
         x1 , y1 = int(mylist[8][1] * w) , int(mylist[8][2] * h)
         x2 , y2 = int(mylist[4][1] * w) , int(mylist[4][2] * h)
@@ -49,7 +46,6 @@ while True:
         fixed_mag =  (math.sqrt((mylist[8][1] - mylist[7][1]) ** 2) + (mylist[8][2] - mylist[7][1]) ** 2)
         cv.circle(img , (x1,y1) , 15 , (255,0,255) , cv.FILLED)
         cv.circle(img , (x2,y2) , 15 , (255,0,255) , cv.FILLED)
-        cv.line(img , (x1 , y1) , (x2 , y2) , (255, 0 , 255) , 2)
         OldRange = (OldMax - OldMin)  
         NewRange = (NewMax - NewMin)  
         NewValue = (((mag**fixed_mag * 100 - OldMin) * NewRange) / OldRange) + NewMin
@@ -57,7 +53,8 @@ while True:
         if round((NewValue)) > 100: v = 100
         elif round((NewValue)) < 0: v =0
         else: v = round((NewValue))
-        
+        cv.line(img , (x1 , y1) , (x2 , y2) , (255 - v * 2 , 0 , v) , 4)
+
         call((["amixer", "-D", "pulse", "sset", "Master", str(v)+"%"]))
         
         
